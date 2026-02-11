@@ -10,7 +10,7 @@ Eigen::VectorXd qdot;
 
 //simulation time and time step
 double t = 0; //simulation time 
-double dt = 0.01; //time step
+double dt = 0.005; //time step
 
 //simulation loop
 bool simulating = true;
@@ -18,6 +18,8 @@ bool simulating = true;
 bool simulation_callback() {
 
     while(simulating) {
+    // while (t < 1 * dt) {
+    // for (int i = 0; i < 5; i++) {
         simulate(q, qdot, dt, t);
         t += dt;
     }
