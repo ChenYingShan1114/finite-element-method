@@ -20,6 +20,29 @@ template<typename ENERGY, typename FORCE, typename STIFFNESS>
 inline void implicit_euler(Eigen::VectorXd &q, Eigen::VectorXd &qdot, double dt, 
                             const Eigen::SparseMatrixd &mass,  ENERGY &energy, FORCE &force, STIFFNESS &stiffness, 
                             Eigen::VectorXd &tmp_qdot, Eigen::VectorXd &tmp_force, Eigen::SparseMatrixd &tmp_stiffness) {
+
+    auto gradient = [&](Eigen::VectorXd &g, Eigen::Ref<const Eigen::VectorXd> qdot2) {
+        force(tmp_force, q+dt*qdot2, qdot);
+        g = mass * (qdot2 - qdot) - dt * tmp_force;
+    };
+
+    auto hessian = [&](Eigen::SparseMatrixd &H, Eigen::Ref<const Eigen::VectorXd> qdot2) {
+        stiffness(tmp_stiffness, q+dt*qdot2, qdot);
+        H = mass - dt * dt * tmp_stiffness;
+    };
+
+    unsigned int maxSteps = 5;
+
+    // tmp_g and tmp_H are scratch space to store gradients and hessians
+    Eigen::VectorXd tmp_g;
+    Eigen::SparseMatrixd tmp_H;
+
+    Eigen::VectorXd v0;
+    v0 = qdot;
     
+    newtons_method(v0, energy, gradient, hessian, maxSteps, tmp_g, tmp_H);
+    qdot = v0;
+    q = q + dt * qdot;
+
 
 }
