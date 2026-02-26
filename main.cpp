@@ -62,6 +62,7 @@ int main(int argc, char **argv) {
     Visualize::setup(q, qdot, true);
     Visualize::viewer().callback_post_draw = &draw_callback;
     Visualize::viewer().launch_init(true,false,"Finite Element Method Using the Linearly Implicit Euler Method",2560,1280);
+    // Visualize::viewer().launch_init(true,false,"Finite Element Method Using Fully Implicit Newton Method",2560,1280);
     Visualize::viewer().launch_rendering(true);
     // Visualize::viewer().launch();
 
